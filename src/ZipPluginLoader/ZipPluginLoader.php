@@ -52,7 +52,7 @@ class ZipPluginLoader implements PluginLoader{
 	 *
 	 * @return Plugin
 	 */
-	public function loadPlugin(string $file): Plugin{//@API
+	public function loadPlugin(string $file): void{//@API
 		if (substr($file,0,strlen(self::PREFIX)) == self::PREFIX) {
 			if (substr($file,-strlen(self::CANARY)) == self::CANARY) {
 				// This is an internal path
@@ -61,14 +61,14 @@ class ZipPluginLoader implements PluginLoader{
 			$desc = $this->myGetPluginDesc($file);
 			$dataFolder=$this->zipdir($file).DIRECTORY_SEPARATOR.$desc->getName();
 			$this->server->getLogger()->info(TextFormat::AQUA."[ZipPluginLoader] Loading zip NESTED plugin " . $desc->getFullName());
-			return $this->initPlugin($desc,$dataFolder,$file);
+			$this->initPlugin($desc,$dataFolder,$file);
 		}
 		$ymls = $this->findFiles($file,"plugin.yml", true);
 		if ($ymls === null) {
 			$this->server->getLogger()->error(TextFormat::RED."[ZipPluginLoader] Unable to load zip $file");
 			$this->server->getLogger()->error(TextFormat::RED."[ZipPluginLoader] plugin.yml not found");
 			throw new PluginException("[ZipPluginLoader] Couldn't load plugin");
-			return null;
+			return;
 		}
 		if (count($ymls) > 1) {
 			// Load all the internal plugins
