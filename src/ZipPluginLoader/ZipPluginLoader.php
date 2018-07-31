@@ -9,23 +9,19 @@ use pocketmine\plugin\PluginLoader;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\utils\PluginException;
-
 class ZipPluginLoader implements PluginLoader{
 	const PREFIX = "myzip://";
 	const PLUGIN_YML = "plugin.yml";
 	const ZIP_EXT = ".zip";
 	const CANARY = "#multi-loader.zip";
-
 	/** @var Server */
 	private $server;
-
 	/**
 	 * @param Server $server
 	 */
 	public function __construct(Server $server){
 		$this->server = $server;
 	}
-
 	/**
 	 * Gets the PluginDescription from the file
 	 *
@@ -49,7 +45,6 @@ class ZipPluginLoader implements PluginLoader{
 		}
 		return $this->myGetPluginDesc(self::PREFIX.$file."#".$ymls[0]);
 	}
-
 	/**
 	 * Loads the plugin contained in $file
 	 *
@@ -57,7 +52,7 @@ class ZipPluginLoader implements PluginLoader{
 	 *
 	 * @return Plugin
 	 */
-	public function loadPlugin(string $file): void{//@API
+	public function loadPlugin(string $file): Plugin{//@API
 		if (substr($file,0,strlen(self::PREFIX)) == self::PREFIX) {
 			if (substr($file,-strlen(self::CANARY)) == self::CANARY) {
 				// This is an internal path
@@ -95,7 +90,6 @@ class ZipPluginLoader implements PluginLoader{
 					}
 				}
 			}
-
 			$loaded = [];
 			while (count($plugins)) {
 				$cnt = 0;
@@ -109,7 +103,6 @@ class ZipPluginLoader implements PluginLoader{
 								break;
 							}
 							if (isset($loaded[$d])) continue;
-
 							$found = $this->server->getPluginManager()->getPlugin($d);
 							if ($found === null) {
 								throw new PluginException("[ZipPluginLoader] Missing dependancy: $d");
@@ -127,7 +120,6 @@ class ZipPluginLoader implements PluginLoader{
 						}
 					}
 					if (!$load) continue;
-
 					// We can load this plugin...
 					$dat = $plugins[$pname];
 					unset($plugins[$pname]);
@@ -144,7 +136,6 @@ class ZipPluginLoader implements PluginLoader{
 				$this->server->getLogger()->error(TextFormat::RED."[ZipPluginLoader] Failed to load plugins ".implode(", ",array_keys($plugins)));
 				return null;
 			}
-
 			// Load dummy
 			$plugins = $this->check_plugins($file,$ymls);
 			$desc =  $this->getDummyDesc($plugins,$file);
@@ -156,7 +147,6 @@ class ZipPluginLoader implements PluginLoader{
 		$basepath = $ymls[0] == self::PLUGIN_YML ?
 					 self::PREFIX.$file."#" :
 					 self::PREFIX.$file."#".dirname($ymls[0])."/";
-
 		$this->server->getLogger()->info(TextFormat::AQUA."[ZipPluginLoader] Loading zip plugin " . $desc->getFullName());
 		return $this->initPlugin($desc,$dataFolder,$basepath);
 	}
@@ -174,27 +164,20 @@ class ZipPluginLoader implements PluginLoader{
 	public function enablePlugin(Plugin $plugin){//@API
 		if($plugin instanceof PluginBase and !$plugin->isEnabled()){
 			$this->server->getLogger()->info("[ZipPluginLoader] Enabling " . $plugin->getDescription()->getFullName());
-
 			$plugin->setEnabled(true);
-
 			Server::getInstance()->getPluginManager()->callEvent(new PluginEnableEvent($plugin));
 		}
 	}
-
 	/**
 	 * @param Plugin $plugin
 	 */
 	public function disablePlugin(Plugin $plugin){//@API
 		if($plugin instanceof PluginBase and $plugin->isEnabled()){
 			$this->server->getLogger()->info("[ZipPluginLoader] Disabling " . $plugin->getDescription()->getFullName());
-
 			Server::getInstance()->getPluginManager()->callEvent(new PluginDisableEvent($plugin));
-
 			$plugin->setEnabled(false);
 		}
 	}
-
-
 	/********************************************************************/
 	protected function getDummyDesc($plugins,$file) {
 		$name = preg_replace('/\.zip$/i',"",basename($file));
@@ -253,7 +236,6 @@ class ZipPluginLoader implements PluginLoader{
 	}
 	protected function check_plugins($file,$ymls) {
 		$plugins = [];
-
 		// Check if there is a control file
 		$ok = false;
 		$ctl = preg_replace('/\.zip$/i','.ctl',$file);
@@ -266,7 +248,6 @@ class ZipPluginLoader implements PluginLoader{
 				$ok[$i] = $i;
 			}
 		}
-
 		foreach ($ymls as $plugin_yml) {
 			$dat = @file_get_contents(self::PREFIX.$file."#".$plugin_yml);
 			if ($dat == "") continue;
@@ -319,7 +300,6 @@ class ZipPluginLoader implements PluginLoader{
 		if($za->open($zip) !== true) return null;
 		// Look for plugin data...
 		$basepath = null;
-
 		for ($i=0;$i < $za->numFiles;$i++) {
 			$st = $za->statIndex($i);
 			if (!isset($st["name"])) continue;
@@ -336,7 +316,6 @@ class ZipPluginLoader implements PluginLoader{
 		if (count($files)) return $files;
 		return null;
 	}
-
 	protected function initPlugin($desc,$dataFolder,$path) {
 		if (!($desc instanceof PluginDescription)) {
 			throw new PluginException("[ZipPluginLoader] Couldn't load plugin");
@@ -347,7 +326,6 @@ class ZipPluginLoader implements PluginLoader{
 			return null;
 		}
 		$className = $desc->getMain();
-
 		$this->server->getLoader()->addPath($path . "src");
 		if(!class_exists($className, true)){
 			throw new PluginException("[ZipPluginLoader] Couldn't load zip plugin " . $desc->getName() . ": main class not found");
