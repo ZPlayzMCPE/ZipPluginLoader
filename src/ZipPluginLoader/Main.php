@@ -13,7 +13,7 @@ class Main extends PluginBase {
 				return;
 			}
 		}
-		$this->getServer()->getPluginManager()->registerInterface(self::LOADER);
+		$this->getServer()->getPluginManager()->registerInterface(PluginLoader self::LOADER);
 		$this->getServer()->getPluginManager()->loadPlugins($this->getServer()->getPluginPath(), ["ZipPluginLoader\\ZipPluginLoader"]);
 		$this->getServer()->enablePlugins(PluginLoadOrder::STARTUP);
 	}
