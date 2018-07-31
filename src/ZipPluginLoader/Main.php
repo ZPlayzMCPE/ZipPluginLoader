@@ -2,7 +2,6 @@
 namespace ZipPluginLoader;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginLoadOrder;
-
 class Main extends PluginBase {
 	const LOADER = "ZipPluginLoader\\ZipPluginLoader";
 	public function onEnable() : void{
@@ -13,7 +12,7 @@ class Main extends PluginBase {
 				return;
 			}
 		}
-		$this->getServer()->getPluginManager()->registerInterface(PluginLoader self::LOADER);
+		$this->getServer()->getPluginManager()->registerInterface(new PluginLoader, self::LOADER($this->getServer()->getLoader()));
 		$this->getServer()->getPluginManager()->loadPlugins($this->getServer()->getPluginPath(), ["ZipPluginLoader\\ZipPluginLoader"]);
 		$this->getServer()->enablePlugins(PluginLoadOrder::STARTUP);
 	}
