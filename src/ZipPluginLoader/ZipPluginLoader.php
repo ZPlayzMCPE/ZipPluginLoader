@@ -106,7 +106,7 @@ class ZipPluginLoader implements PluginLoader{
 							$found = $this->server->getPluginManager()->getPlugin($d);
 							if ($found === null) {
 								throw new PluginException("[ZipPluginLoader] Missing dependancy: $d");
-								return null;
+								return;
 							}
 						}
 						if (!$load) continue;
@@ -134,13 +134,13 @@ class ZipPluginLoader implements PluginLoader{
 			}
 			if (count($plugins)) {
 				$this->server->getLogger()->error(TextFormat::RED."[ZipPluginLoader] Failed to load plugins ".implode(", ",array_keys($plugins)));
-				return null;
+				return;
 			}
 			// Load dummy
 			$plugins = $this->check_plugins($file,$ymls);
 			$desc =  $this->getDummyDesc($plugins,$file);
 			$dataFolder = dirname($file) . DIRECTORY_SEPARATOR . $desc->getName();
-			return $this->initPlugin($desc,$dataFolder,$file);
+			$this->initPlugin($desc,$dataFolder,$file);
 		}
 		$desc = $this->myGetPluginDesc(self::PREFIX.$file."#".$ymls[0]);
 		$dataFolder = dirname($file) . DIRECTORY_SEPARATOR . $desc->getName();
@@ -148,7 +148,7 @@ class ZipPluginLoader implements PluginLoader{
 					 self::PREFIX.$file."#" :
 					 self::PREFIX.$file."#".dirname($ymls[0])."/";
 		$this->server->getLogger()->info(TextFormat::AQUA."[ZipPluginLoader] Loading zip plugin " . $desc->getFullName());
-		return $this->initPlugin($desc,$dataFolder,$basepath);
+		$this->initPlugin($desc,$dataFolder,$basepath);
 	}
 	/**
 	 * Returns the filename patterns that this loader accepts
