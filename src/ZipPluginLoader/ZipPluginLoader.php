@@ -346,4 +346,20 @@ class ZipPluginLoader implements PluginLoader{
 		}
 		return dirname($ff);
 	}
+/**
+	 * Returns whether this PluginLoader can load the plugin in the given path.
+	 *
+	 * @param string $path
+	 *
+	 * @return bool
+	 */
+	public function canLoadPlugin(string $path) : bool{
+}
+/**
+	 * Returns the protocol prefix used to access files in this plugin, e.g. file://, phar://
+	 *
+	 * @return string
+	 */
+	public function getAccessProtocol() : string{
+}
 }
