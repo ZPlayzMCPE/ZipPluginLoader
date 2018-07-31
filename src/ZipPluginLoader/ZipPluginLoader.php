@@ -33,7 +33,7 @@ class ZipPluginLoader implements PluginLoader{
 	 *
 	 * @return PluginDescription
 	 */
-	public function getPluginDescription(string $file){//@API
+	public function getPluginDescription(string $file) : ?PluginDescription{//@API
 		if (substr($file,0,strlen(self::PREFIX)) == self::PREFIX) {
 			if (substr($file,-strlen(self::CANARY)) == self::CANARY) {
 				// This is an internal path
@@ -57,7 +57,7 @@ class ZipPluginLoader implements PluginLoader{
 	 *
 	 * @return Plugin
 	 */
-	public function loadPlugin(string $file){//@API
+	public function loadPlugin(string $file): void{//@API
 		if (substr($file,0,strlen(self::PREFIX)) == self::PREFIX) {
 			if (substr($file,-strlen(self::CANARY)) == self::CANARY) {
 				// This is an internal path
